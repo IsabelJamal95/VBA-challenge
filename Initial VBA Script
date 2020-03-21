@@ -1,0 +1,93 @@
+Sub YearlyStocks()
+
+Dim ws As Worksheet
+
+For Each ws In Worksheets
+
+    Cells(1, 9).Value = "Ticker"
+    Cells(1, 10).Value = "Yearly Change"
+    Cells(1, 11).Value = "Percent Change"
+    Cells(1, 12).Value = "Total Stock Volume"
+    
+    Dim Ticker_Symbol As String
+    Dim Total As Double
+    Dim Yearly_Change As Double
+    Dim Summary_Table_Row As Integer
+    Dim Open_Value As Long
+    Dim Percent_Change As Double
+    
+    Total = 0
+    Summary_Table_Row = 2
+    Open_Value = 2
+    Last_Row = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    For i = 2 To Last_Row
+    
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value Then
+        
+            Total = Total + Cells(i, 7).Value
+            
+            Range("L" & Summary_Table_Row).Value = Total
+            
+            Ticker_Symbol = Cells(i, 1).Value
+            
+            Range("I" & Summary_Table_Row).Value = Ticker_Symbol
+            
+                If Cells(Open_Value, 3) = 0 Then
+                    
+                    For Find_Value = Open_Value To i
+                        
+                        If Cells(Find_Value, 3).Value <> 0 Then
+                            
+                            Open_Value = Find_Value
+                            
+                            Exit For
+                        
+                        End If
+                     
+                     Next Find_Value
+                
+                End If
+            
+            Yearly_Change = Cells(i, 6) - Cells(Open_Value, 3)
+            
+            Percent_Change = Yearly_Change / Cells(Open_Value, 3)
+            
+            Range("J" & Summary_Table_Row).Value = Yearly_Change
+            
+                If Range("J" & Summary_Table_Row).Value > 0 Then
+            
+                    Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
+            
+                Else
+            
+                    Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
+            
+                End If
+                
+             
+            
+                
+            Range("K" & Summary_Table_Row).Value = Percent_Change
+            
+            Range("K" & Summary_Table_Row).Value = Format(Percent_Change, "0.00%")
+            
+            Summary_Table_Row = Summary_Table_Row + 1
+            
+            Open_Value = i + 1
+            
+            Total = 0
+            
+            Yearly_Change = 0
+            
+        Else
+            
+            Total = Total + Cells(i, 7).Value
+        
+        End If
+            
+     Next i
+    
+Next ws
+
+End Sub
