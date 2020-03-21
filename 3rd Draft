@@ -1,0 +1,165 @@
+Sub YearlyStocks()
+
+Dim ws As Worksheet
+Dim Ticker_Symbol As String
+Dim Total As Double
+Dim Yearly_Change As Single
+Dim Summary_Table_Row As Integer
+Dim Open_Value As Long
+Dim Percent_Change As Double
+    
+For Each ws In Worksheets
+
+    ws.Cells(1, 9).Value = "Ticker"
+    ws.Cells(1, 10).Value = "Yearly Change"
+    ws.Cells(1, 11).Value = "Percent Change"
+    ws.Cells(1, 12).Value = "Total Stock Volume"
+    ws.Cells(2, 15).Value = "Greatest % Increase"
+    ws.Cells(3, 15).Value = "Greatest % Decrease"
+    ws.Cells(4, 15).Value = "Greatest Total Volume"
+    
+   
+    
+    Total = 0
+    Summary_Table_Row = 2
+    Open_Value = 2
+    Last_Row = Cells(Rows.Count, 1).End(xlUp).Row
+    
+    Worksheet_Name = ws.Name
+    MsgBox Worksheet_Name
+    
+    For i = 2 To Last_Row
+    
+    
+    
+        If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+        
+            Total = Total + ws.Cells(i, 7).Value
+            
+            ws.Range("L" & Summary_Table_Row).Value = Total
+            
+            Ticker_Symbol = ws.Cells(i, 1).Value
+            
+            ws.Range("I" & Summary_Table_Row).Value = Ticker_Symbol
+            
+                If ws.Cells(Open_Value, 3) = 0 Then
+                    
+                    For Find_Value = Open_Value To i
+                        
+                        If ws.Cells(Find_Value, 3).Value <> 0 Then
+                            
+                            Open_Value = Find_Value
+                            
+                            Exit For
+                        
+                        End If
+                     
+                     Next Find_Value
+                
+                End If
+            
+            Yearly_Change = ws.Cells(i, 6) - ws.Cells(Open_Value, 3)
+            
+            Percent_Change = Yearly_Change / ws.Cells(Open_Value, 3)
+            
+            ws.Range("J" & Summary_Table_Row).Value = Yearly_Change
+            
+                If ws.Range("J" & Summary_Table_Row).Value > 0 Then
+            
+                    ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 4
+            
+                Else
+            
+                    ws.Range("J" & Summary_Table_Row).Interior.ColorIndex = 3
+            
+                End If
+                
+             
+            
+                
+            ws.Range("K" & Summary_Table_Row).Value = Percent_Change
+            
+            'Range("K" & Summary_Table_Row).Value = Format(Percent_Change, "0.00%")
+            
+            Summary_Table_Row = Summary_Table_Row + 1
+            
+            Open_Value = i + 1
+            
+            Total = 0
+            
+            Yearly_Change = 0
+            
+        Else
+            
+            Total = Total + ws.Cells(i, 7).Value
+        
+        End If
+            
+     Next i
+     
+     j = 2
+     
+     highpercent = ws.Cells(j, 11).Value
+     
+     For j = 3 To Summary_Table_Row
+     
+        If ws.Cells(j, 11).Value > highpercent Then
+     
+        highpercent = ws.Cells(j, 11).Value
+     
+        TickerName = ws.Cells(j, 9).Value
+     
+        Else
+     
+        End If
+           
+     
+     Next j
+     
+     For j = 3 To Summary_Table_Row
+     
+        If ws.Cells(j, 11).Value < lowpercent Then
+     
+        lowpercent = ws.Cells(j, 11).Value
+     
+        TickerName = ws.Cells(j, 9).Value
+     
+        Else
+     
+        End If
+           
+     
+     Next j
+     
+     For j = 3 To Summary_Table_Row
+     
+        If ws.Cells(j, 12).Value > highestvolume Then
+     
+        highestvolume = ws.Cells(j, 12).Value
+     
+        TickerName = ws.Cells(j, 9).Value
+     
+        Else
+     
+        End If
+           
+     
+     Next j
+     
+     
+     
+     ws.Range("P" & 2).Value = TickerName
+     
+     ws.Range("Q" & 2).Value = highpercent
+     
+    ws.Range("P" & 3).Value = TickerName
+     
+     ws.Range("Q" & 3).Value = lowpercent
+     
+     ws.Range("P" & 4).Value = TickerName
+     
+     ws.Range("Q" & 4).Value = highestvolume
+    
+Next ws
+
+End Sub
